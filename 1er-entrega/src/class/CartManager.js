@@ -36,12 +36,27 @@ class CartManager {
     // consultamos el producto por el id (find busca comparando los id)
     getCartId(cartId) {
         this.getCart();
-        const product = this.carts.find(product => product.id === cartId);
-          if (!product) {
+        const product = this.carts.find(cart => cart.id === cartId);
+        if (!product) {
             throw new Error("el Carrito no encontrador.");
         }
         return product;
     }
-}
+
+   
+        generateIdCart() {
+            this.getCart();
+            const lastCart = this.carts[this.carts.length - 1];
+            const lastCartId = lastCart ? lastCart.id : 0;
+            const newCartId = lastCartId + 1;
+            return newCartId;
+        }
+
+    }
+
+   
+
+
 
 export default CartManager;
+

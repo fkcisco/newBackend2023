@@ -48,15 +48,13 @@ class ProductManager {
             product.title === null || product.description === null || product.price === null ||
             product.thumbnails === null || product.code === null || product.stock === null) {
             throw new Error("Campos obligatorios.");
-        }
-
-        
+        }        
         
         const idList = this.products.some(idList  => idList.id === product.id);
         if (idList) {
             throw new Error("Código ya definido.");
         }
-        
+                
         const createProduct = {
             id: this.generateIdProduct(),
             ...product

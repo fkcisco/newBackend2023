@@ -8,54 +8,72 @@ import CartManager from '../class/CartManager.js';
 
 const cartManager = new CartManager('./carrito.json');
 
-
 let cartIdCounter = 1;
-function generateIdCart() {
-    const newIdCart = cartIdCounter.toString();
-    cartIdCounter++;
-    return newIdCart;
-}
 
-// Este post no va entonces, es solo el post pasando los valores por el params
-// router.post( "/", ( req, res ) => {      
-//     try {           
-//         const { products } = req.body;
-//         const cartId = generateIdCart();
 
-//         const createCart = {
-//             id: cartId,
-//             products: products
-//         };        
+// Tutor habia entendi mal el proceso, se ve.
+// aca creo un carrito y le designo los productos
+// pasando los valores en el body
+// POST -> http://localhost:8080/api/carts
+// { 
+//     "products":[{
+//     "id-p": 15,
+//     "quantity":4
+//     },
+//     {
+//     "id-p": 10,
+//     "quantity":5
+//     }]
+//   }
 
-//         let carrito = [];
+router.post( "/", ( req, res ) => {      
+    
+    try {           
+        const { products } = req.body;
 
-//         try {
-//             carrito = cartManager.getCart();
-//         } catch (error) {
-//             cartManager.saveCartEmpty()              
-//         }
+        // aca pude resolver lo del id incremental
+        const cartId = cartManager.generateIdCart();
 
-//         const idExistente = carrito.find(item => item.id === createCart.id);
+        const createCart = {
+            id: cartId,
+            products: products
+        };        
 
-//         if(!idExistente) {
-//             carrito.push(createCart); 
-//             cartManager.saveCart(carrito);
-//             res.status(200).json(carrito);  
-//         } else {
-//             res.status(500).json({error: "El producto ya existe en el carrito."});
-//         }              
- 
+        let carrito = [];
+
+        try {
+            carrito = cartManager.getCart();
+        } catch (error) {
+            cartManager.saveCartEmpty()              
+        }
+
+        console.log(createCart )
+
+        const idExistente = carrito.find(item => item.id === createCart.id);
+
+        if(!idExistente) {
+            carrito.push(createCart); 
+            cartManager.saveCart(carrito);
+            res.status(200).json(carrito);  
+        } else {
+            res.status(500).json({error: "El producto ya existe en el carrito."});
+        }             
+
         
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({error: "Error al crear el carrito"});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error: "Error al crear el carrito"});
         
-//     } 
-// })
+    } 
+})
+
+
 
 router.get( "/:cid", ( req, res ) => {
     
-    const cartId = req.params.cid; 
+    const cartId = parseInt(req.params.cid); 
+
+   
 
     try {        
         const cart = cartManager.getCartId(cartId); 
@@ -68,7 +86,7 @@ router.get( "/:cid", ( req, res ) => {
 
 router.post( "/:cid/product/:pid", ( req, res ) => {
 
-    const cartId = req.params.cid;
+    const cartId = parseInt(req.params.cid);
     const productId = parseInt(req.params.pid);
 
     let carrito = [];
@@ -77,46 +95,31 @@ router.post( "/:cid/product/:pid", ( req, res ) => {
         carrito = cartManager.getCart();         
     } catch (error) {
         cartManager.saveCartEmpty()              
-    }
+    }   
 
-    const productToAdd = {
-        product: productId,
-        quantity: 1
-    };
+    const carritoFiltrado = carrito.find(cart => cart.id === cartId);
 
-    const createCart = {
-        id: cartId,
-        products: [productToAdd]
-    }; 
+    const productoEncontrado = carritoFiltrado.products.find(producto => producto['id-p'] === productId);
 
-    const existingCartIndex = carrito.findIndex((cart) => cart.id === cartId);
+    
 
-    if (existingCartIndex !== -1) {
+     if (!carritoFiltrado) {
+        return 'Error no existe el carrito';
+      }     
 
-        const existingProduct = carrito[existingCartIndex].products.find((product) => product.product === productId);
-
-        if (existingProduct) {
-
-            existingProduct.quantity += 1;
-        } else {
-
-            carrito[existingCartIndex].products.push({ product: productId, quantity: quantity || 1 });
-        }
-    } else {
+    if (productoEncontrado) {
+        const quantity = productoEncontrado.quantity;
+        productoEncontrado.quantity += 1;
+      } else {
         const productToAdd = {
-            product: productId,
-            quantity: 1
+          "id-p": productId,
+          quantity: 1
         };
+        carritoFiltrado.products.push(productToAdd);
+      }
+      
 
-        const createCart = {
-            id: cartId,
-            products: [productToAdd]
-        };
-
-        carrito.push(createCart);
-    }
-
-    cartManager.saveCart(carrito);
+      cartManager.saveCart(carrito);
 
     
 })

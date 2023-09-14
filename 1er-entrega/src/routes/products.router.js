@@ -9,7 +9,6 @@ import ProductManager from '../class/ProductManager.js';
 // creamos una nueva instancia del producto
 const productManager = new ProductManager('./productos.json');
 
-
 router.get( "/", ( req, res ) => {
     const productosCargados = productManager.getProducts();
     res.send(productosCargados)
@@ -25,8 +24,7 @@ router.get("/:pid", (req, res) => {
     }
 });
 
-router.post("/", (req, res) => {  
-   
+router.post("/", (req, res) => {    
 
     const product =  req.body
     productManager.addProduct(product)  
