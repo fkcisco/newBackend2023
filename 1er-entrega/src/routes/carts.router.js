@@ -15,28 +15,16 @@ let cartIdCounter = 1;
 // aca creo un carrito y le designo los productos
 // pasando los valores en el body
 // POST -> http://localhost:8080/api/carts
-// { 
-//     "products":[{
-//     "id-p": 15,
-//     "quantity":4
-//     },
-//     {
-//     "id-p": 10,
-//     "quantity":5
-//     }]
-//   }
 
 router.post( "/", ( req, res ) => {      
     
     try {           
-        const { products } = req.body;
-
         // aca pude resolver lo del id incremental
         const cartId = cartManager.generateIdCart();
 
         const createCart = {
             id: cartId,
-            products: products
+            products: []
         };        
 
         let carrito = [];
