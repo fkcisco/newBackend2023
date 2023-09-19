@@ -7,6 +7,7 @@ import { Server }  from 'socket.io';
 const app = express();
 const httpServer = app.listen(8080, () => console.log("Escuchando el puerto 8080") );
 const socketServer = new Server(httpServer);
+export default socketServer;
 
 app.engine('handlebars', handlebars.engine());
 
@@ -17,6 +18,6 @@ app.use(express.static(__dirname+"/public"));
 app.use('/', viewsRouter);
 
 socketServer.on('connection', (socket) => {
-    socket.emit('updateFoods', foods);
+   // socket.emit('updateFoods', foods);
 });
 

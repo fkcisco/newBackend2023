@@ -1,21 +1,15 @@
-<div>
-   <p>Lista de productos en tiempo real:</p>
-   <ul id="foodList">
-   </ul>
-</div>
+<form action="/" method="POST" id="product-form">
+    <input type="text" id="name" name="name" placeholder="Ingresar nombre del producto">
+    <input type="number" name="price" id="price">
+    <input type="submit" value="Cargar">
+</form>
+
+<h2>Lista de productos en tiempo real:</h2>
+    <ul>
+        {{#each food}}
+            <li>{{this.name}} - ${{this.price}}</li>
+        {{/each}}
+    </ul>
+
 <script src="/socket.io/socket.io.js"></script>
-<script>
-    const socket = io();
-
-    socket.on('updateFoods', (foods) => {
-        const foodList = document.getElementById('foodList');
-        foodList.innerHTML = '';
-
-        foods.forEach((food) => {
-            const listItem = document.createElement('li');
-            listItem.textContent = `${food.name}: $${food.price}`;
-            foodList.appendChild(listItem);
-        });
-    });
-</script>
 <script src="/js/index.js"></script>
